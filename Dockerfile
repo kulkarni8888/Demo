@@ -5,10 +5,10 @@ FROM openjdk:11-jdk-slim
 WORKDIR /usr/src/app
 
 # Copy the source code into the container
-COPY . .
+COPY src/main/java/com/mycompany/app/App.java .
 
 # Compile the Java source code
-RUN javac Main.java
+RUN javac App.java
 
 # Command to run the application when the container starts
-CMD ["java", "Main"]
+CMD ["java", "App"]
