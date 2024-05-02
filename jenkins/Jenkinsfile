@@ -1,29 +1,23 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.0'
-            args '-v /root/.m2:/root/.m2'
-        }
+    agent any
+    environment {
+        IMAGE_NAME = "demo"
     }
+
     stages {
-        stage('Build') {
+        stage('Git Clone') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                // Checkout using SSH key-based authentication
+            git changelog: false, credentialsId: 'jenkins', poll: false, url: 'git@github.com:kulkarni8888/Demo.git'
             }
         }
-        stage('Test') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+                script {
+                    // Build the Docker image from the repository
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
                 }
-            }
-        }
-        stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
             }
         }
     }
